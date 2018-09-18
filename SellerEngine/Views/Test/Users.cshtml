@@ -1,0 +1,119 @@
+﻿@model List<SellerEngine.EntityCredential>
+
+@{
+    ViewBag.Title = "Users";
+}
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<div class="container">
+    <div class="form-group">
+        <div class="col-lg-16">
+            <a href="/Test/NewUser?rootId=@Request.QueryString["id"]">New User</a> | <a href="/Test/AllAdds?rootId=@Request.QueryString["id"]">List Adds</a>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-lg-16">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>
+                            Nick Name
+                        </th>
+                        <th>
+                            Account
+                        </th>
+                        <th>
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @item.NickName
+                                <small style="color:red" class="spin_@item.Id"></small>
+                            </td>
+                            <td>
+                                @item.EntityName
+                            </td>
+                            <td>
+                                <div class="action_@item.Id">
+                                    <a href="/Test/NewUser?id=@item.Id">Edit</a> | <a href="javsacript:;">Delete</a>
+                                </div>
+                                <div class="fb_login_@item.Id hidden">
+                                    <a href="/Test/NewUser?id=@item.Id">Authentication Required</a>
+                                </div>
+                                @*<a href="/Test/ListAdds?credId=@item.Id">Continue</a> |*@
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/jquery-1.9.1.js"></script>
+<script>
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '1484207085025748',
+            xfbml: true,
+            version: 'v2.11'
+        });
+
+        FB.AppEvents.logPageView();
+
+    };
+
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) { return; }
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    //check if token is valid, then continue, else ask for fb login again
+    $(window).load(function () {
+       @foreach (var item in Model.Where(x=>x.EntityName.Equals("FB")).ToList())
+       {
+           <text>
+        var credId = '@item.Id';
+        $.ajax({
+            url: '/Test/PullToken',
+            type: 'POST',
+            beforeSend: function () {
+                if ($(document).find(".spin_" + credId).hasClass("hidden")) {
+                    $(document).find(".spin_" + credId).removeClass("hidden");
+                }
+                $(document).find(".spin_" + credId).text("Validating account...");
+            },
+            data: { credId: credId },
+            success: function (tkn) {
+                debugger;
+                FB.api(
+                    "/me",
+                    { "access_token": tkn },
+                    function (response) {
+                        $(document).find(".spin_" + credId).addClass("hidden")
+                        if (response.error) {
+                                //Token expired, FB login needed
+                                if ($(document).find(".fb_login_" + credId).hasClass("hidden")) {
+                                    $(document).find(".fb_login_" + credId).removeClass("hidden");
+                                }
+
+                                if (!$(document).find(".action_" + credId).hasClass("hidden")) {
+                                    $(document).find(".action_" + credId).addClass("hidden");
+                                }
+                        }
+                    }
+                );
+            }
+        });
+        </text>
+       }
+    });
+
+</script>

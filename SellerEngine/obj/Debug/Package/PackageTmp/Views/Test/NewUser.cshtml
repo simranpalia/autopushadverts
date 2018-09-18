@@ -1,0 +1,147 @@
+﻿@model SellerEngine.EntityCredential
+@{
+    ViewBag.Title = "New User";
+    List<SelectListItem> ddlEntities = new List<SelectListItem>();
+    ddlEntities.Add(new SelectListItem() { Text = "iBilik", Value = "iBilik" });
+    ddlEntities.Add(new SelectListItem() { Text = "Mudah", Value = "Mudah" });
+
+}
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+
+<div class="container">
+    <h4>
+        Set up Login / FB Login
+    </h4>
+    @using (Html.BeginForm("NewUser", "Test", FormMethod.Post))
+    {
+        <div class="form-horizontal">
+            <div class="form-group">
+                <div class="col-lg-16">
+                    @*<div class="fb-login-button" data-max-rows="1" data-size="large"
+                        data-button-type="continue_with" data-show-faces="false"
+                        data-auto-logout-link="false" data-use-continue-as="true"></div>*@
+                    <fb:login-button scope="user_managed_groups,read_custom_friendlists,public_profile,email,user_likes,manage_pages,pages_show_list,publish_pages,publish_actions"
+                                     onlogin="checkLoginState();">
+                    </fb:login-button>
+                </div>
+            </div>
+            @Html.HiddenFor(x => x.Id)
+            @Html.HiddenFor(x => x.CreatedAt)
+            @Html.HiddenFor(x => x.RootId)
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        Nick Name
+                    </div>
+                    <div class="col-lg-12">
+                        @Html.TextBoxFor(x => x.NickName, new { @class = "form-control", placeholder = "Nick Name", required = "required" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        User Name
+                    </div>
+                    <div class="col-lg-12">
+                        @Html.TextBoxFor(x => x.UserName, new { @class = "form-control", placeholder = "User Name", required = "required" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        Password
+                    </div>
+                    <div class="col-lg-12">
+                        @Html.TextBoxFor(x => x.Password, new { @class = "form-control", placeholder = "Password", required = "required" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        Entity
+                    </div>
+                    <div class="col-lg-12">
+                        @Html.DropDownListFor(x => x.EntityName, new SelectList(ddlEntities, "Value", "Text"), "--Select--", new { @class = "form-control", required = "required" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <button type="submit" class=" btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<div id="fb-root"></div>
+<script src="~/Scripts/jquery-1.9.1.js"></script>
+<script src="~/Scripts/sellerEngine.js"></script>
+<script>
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '1484207085025748',
+            xfbml: true,
+            version: 'v2.11'
+        });
+
+        FB.AppEvents.logPageView();
+
+    };
+
+    function checkLoginState() {
+        debugger;
+        FB.getLoginStatus(function (response) {
+            statusChangeCallback(response);
+        });
+    }
+
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) { return; }
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    function statusChangeCallback(fbResponse) {
+        var dbData = fbResponse;
+
+        debugger;
+        if (dbData) {
+            if (dbData.status) {
+                if (dbData.status == "connected") {
+
+                    FB.api('/me', function (response) {
+                        $.ajax({
+                            url: '/Test/StoreFBResponse',
+                            type: 'POST',
+                            data: {
+                                authToken: dbData.authResponse.accessToken,
+                                userId: dbData.authResponse.userID, rootId: '@Model.RootId', userName: response.name
+                            },
+                        success: function (resp) {
+                            if (resp == "OK") {
+
+                                //pull group info from FB.api
+                                pullFBGroups(dbData.authResponse.accessToken, dbData.authResponse.userID,'/Test/Users?id=@Model.RootId');
+
+                            }
+                            else {
+                                alert(resp);
+                            }
+                        },
+                    })
+                    });
+                }
+                else
+                {
+                    alert("FB: Not Authenticated, please authenticate again.");
+                }
+            }
+        }
+    }
+
+</script>

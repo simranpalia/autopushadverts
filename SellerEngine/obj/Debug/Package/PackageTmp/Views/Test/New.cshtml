@@ -1,0 +1,455 @@
+﻿@model SellerEngine.Models.AdvertModuleViewModel
+@{
+    ViewBag.Title = "New Advertisement";
+
+    List<SelectListItem> ddlLocation = new List<SelectListItem>();
+    ddlLocation.Add(new SelectListItem() { Text = "Johor", Value = "Johor" });
+    ddlLocation.Add(new SelectListItem() { Text = "Selangor", Value = "Selangor" });
+
+    List<SelectListItem> ddlPref = new List<SelectListItem>();
+    ddlPref.Add(new SelectListItem() { Text = "Any Preference", Value = "Any Preference" });
+    ddlPref.Add(new SelectListItem() { Text = "Malay", Value = "Malay" });
+
+    int i = 0;
+}
+
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+    .fb-group {
+        margin-left: 25px;
+    }
+</style>
+<div class="container">
+    @using (Html.BeginForm("New", "Test", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="form-horizontal">
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <a href="/">Home</a> | <a href="/Test/AllAdds?rootId=@Request.QueryString["rootId"]">All Adds</a>
+                </div>
+            </div>
+            @Html.HiddenFor(x => x.Id)
+            @Html.HiddenFor(x => x.RootId)
+            @Html.HiddenFor(x => x.CredId)
+            @Html.HiddenFor(x => x.CreatedAt)
+            @Html.HiddenFor(x => x.CloudId)
+            <input type="hidden" id="hdnUploadUrl" value="" />
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        <label class="control-label">Title</label>
+                    </div>
+                    <div class="col-lg-12">
+                        @Html.TextBoxFor(x => x.Title, new { @class = "form-control", placeholder = "Title", required = "required" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        <label class="control-label">Summary</label>
+                    </div>
+                    <div class="col-lg-12">
+                        @Html.TextAreaFor(x => x.Summary, new { @class = "form-control", placeholder = "Summary", required = "required" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        <label class="control-label">Location</label>
+                    </div>
+                    <div class="col-lg-12">
+                        @Html.DropDownListFor(x => x.Location, new SelectList(ddlLocation, "Value", "Text"), "--Select--", new { @class = "form-control", required = "required" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        <label class="control-label">Preference</label>
+                    </div>
+                    <div class="col-lg-12">
+                        @Html.DropDownListFor(x => x.Preference, new SelectList(ddlPref, "Value", "Text"), "--Select--", new { @class = "form-control", required = "required" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        <label class="control-label">Price/Rent</label>
+                    </div>
+                    <div class="col-lg-12">
+                        @Html.DropDownListFor(x => x.Price, new SelectList(Enumerable.Range(250, 900)), "--Select--", new { @class = "form-control", required = "required" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        <label class="control-label">Amenities</label>
+                    </div>
+                    <div class="col-lg-12">
+                        <label>
+                            @Html.CheckBoxFor(x => x.AirCond) Air Cond.
+                        </label>
+                        <br />
+                        <label>
+                            @Html.CheckBoxFor(x => x.CookingAllowed) Cooking Allowed
+                        </label>
+                        <br />
+                        <label>
+                            @Html.CheckBoxFor(x => x.Internet) Internet
+                        </label>
+                        <br />
+                        <label>
+                            @Html.CheckBoxFor(x => x.NearKTM) Near KTM
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        Picture
+                    </div>
+                    <div class="col-lg-12">
+                        <form id="fileForm" enctype="multipart/form-data">
+                            <input name="file" class="file_cloud" type="file" />
+                            <input type="button" class="btn_upload btn btn-primary" value="Upload" />
+                            <input type="hidden" name="hdnCloudId" id="hdnCloudId" value="" />
+                        </form>
+                        <progress class="hidden"></progress>
+                        <div class="url_details hidden">
+                            <a href="javascript:;" class="anc_remove">Remove</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        Publish On:
+                    </div>
+                    <div class="col-lg-12">
+                        @foreach (var item in Model.Users)
+                        {
+                            <label class="lbl">
+                                <input type="checkbox" class="chk" data-entity="@item.EntityName" data-credid="@item.Id" /> @item.NickName<span> (</span>@item.EntityName<span>)</span>
+                                <span class="response"></span>
+                            </label>
+                            <br />
+                            if (item.EntityName.Equals("FB"))
+                            {
+                                foreach (var fbGroup in SellerEngine.DAL.GetUserGroups(item.Id))
+                                {
+                                    <label class="fb-group">
+                                        <input type="checkbox" class="chk_group_@item.Id" data-groupid="@fbGroup.Id" data-groupname="@fbGroup.GroupTitle" data-fbid="@fbGroup.GroupId" /> @fbGroup.GroupTitle
+                                        <span class="response_group"></span>
+                                    </label>
+                                    <br />
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <button type="button" class="btn btn-primary btn_publish">Publish</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script src="~/Scripts/jquery-1.9.1.js"></script>
+<script>
+
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '1484207085025748',
+            xfbml: true,
+            version: 'v2.11'
+        });
+
+        FB.AppEvents.logPageView();
+    };
+
+
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) { return; }
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    var lastUrl = '';
+    var respArray = [];
+
+    $(".btn_publish").click(function () {
+
+        //quickly submit the form to get Id for Advert Table
+        $.ajax({
+            url: '/Test/PostAdvert',
+            type: 'POST',
+            async: false,
+            beforeSend: function () {
+                $(".btn_publish").text("Posting...");
+            },
+            data: $("form").serialize(),
+            success: function (resp) {
+                $(".btn_publish").text("Publish");
+                if ($("#Id").val() == 0) {
+                    $("#Id").val(resp);
+                }
+            }
+        });
+
+        $(document).find(".chk").each(function (indx, el) {
+
+            var $chk = $(el);
+
+            debugger;
+
+            if ($chk.is(":checked")) {
+
+                var entityName = $chk.data("entity");
+
+                if (entityName == "iBilik") {
+
+                    $("#CredId").val("");
+                    $("#CredId").val($chk.data("credid"));
+
+                    $.ajax({
+                        url: '/Test/New',
+                        type: 'POST',
+                        beforeSend: function () {
+                            $chk.parents(".lbl").find(".response").text("Posting...");
+                        },
+                        data: $("form").serialize(),
+                        success: function (resp) {
+                            debugger;
+                            $chk.parents(".lbl").find(".response").text("");
+                            //$chk.parents(".lbl").find(".response").text(resp);
+
+                            //respArray.push(resp.split('^')[0]);
+                            //respArray.push(resp.split('^')[1]);
+                            //respArray.push(resp.split('^')[2]);
+
+                            $chk.parents(".lbl").find(".response").text(resp.split('^')[0]);
+                        }
+                    });
+                }
+
+                if (entityName == "Mudah") {
+
+                    $("#CredId").val("");
+                    $("#CredId").val($chk.data("credid"));
+
+                    $.ajax({
+                        url: '/Test/New',
+                        type: 'POST',
+                        beforeSend: function () {
+                            $chk.parents(".lbl").find(".response").text("Posting...");
+                        },
+                        data: $("form").serialize(),
+                        success: function (resp) {
+                            debugger;
+                            $chk.parents(".lbl").find(".response").text("");
+                            //$chk.parents(".lbl").find(".response").text(resp);
+
+                            //respArray.push(resp.split('^')[0]);
+                            //respArray.push(resp.split('^')[1]);
+                            //respArray.push(resp.split('^')[2]);
+
+                            $chk.parents(".lbl").find(".response").text(resp.split('^')[0]);
+                        }
+                    });
+                }
+
+                if (entityName == "FB") {
+
+                    $("#CredId").val("");
+                    $("#CredId").val($chk.data("credid"));
+
+                    //fetch token from DB and try pulling user info
+                    $.ajax({
+                        url: '/Test/PullToken',
+                        type: 'POST',
+                        data: { credId: $chk.data("credid") },
+                        success: function (fbResp) {
+                            var authToken = fbResp;
+
+                            debugger;
+
+                            //check ticked groups
+                            $(document).find(".chk_group_" + $chk.data("credid")).each(function (i, groupChk) {
+                                var $grpChk = $(groupChk);
+
+                                if ($grpChk.is(":checked")) {
+
+                                    $grpChk.next(".response_group").text("");
+                                    $grpChk.next(".response_group").text(" (Posting...)");
+
+                                    //post without attachment
+                                    if ($("#hdnUploadUrl").val()) {
+                                        FB.api(
+                                            "/" + $grpChk.data("fbid") + "/photos",
+                                            "POST",
+                                            {
+                                                "url": $("#hdnUploadUrl").val(),
+                                                "caption": createFBContent(),
+                                                "access_token": authToken
+                                            },
+                                            function (response) {
+
+                                                debugger
+                                                if (response && !response.error) {
+                                                    //success
+                                                    $.ajax({
+                                                        url: '/Test/SaveToModule',
+                                                        type: 'POST',
+                                                        data: {
+                                                            advertId: $("#Id").val(), postId: response.id, entityId: $grpChk.data("fbid"),
+                                                            entityName: 'FBGroup', entityUrl: '', credId: $chk.data("credid")
+                                                        },
+                                                        success: function (grpResp) {
+                                                            $grpChk.next(".response_group").text(" (Posted.)");
+
+                                                        }
+                                                    })
+                                                }
+                                                else {
+                                                    //error,
+                                                    alert(response.error);
+                                                    $grpChk.next(".response_group").text(" (Error.)");
+                                                }
+                                            }
+                                        );
+                                    }
+                                    else {
+                                        FB.api(
+                                            "/" + $grpChk.data("fbid") + "/feed",
+                                            "POST",
+                                            {
+                                                "message": createFBContent(),
+                                                "access_token": authToken
+                                            },
+                                            function (response) {
+
+                                                debugger
+                                                if (response && !response.error) {
+                                                    //success
+                                                    $.ajax({
+                                                        url: '/Test/SaveToModule',
+                                                        type: 'POST',
+                                                        data: {
+                                                            advertId: $("#Id").val(), postId: response.id, entityId: $grpChk.data("fbid"),
+                                                            entityName: 'FBGroup', entityUrl: '', credId: $chk.data("credid")
+                                                        },
+                                                        success: function (grpResp) {
+                                                            $grpChk.next(".response_group").text(" (Posted.)");
+                                                        }
+                                                    })
+                                                }
+                                                else {
+                                                    //error,
+                                                    alert(response.error);
+                                                    $grpChk.next(".response_group").text(" (Error.)");
+                                                }
+                                            }
+                                        );
+                                    }
+
+                                }
+                            });
+                        },
+                    });
+                }
+            }
+        });
+    });
+
+    $(".btn_upload").click(function () {
+        $.ajax({
+            url: '/Test/UploadFile?appendUrl=true',
+            type: 'POST',
+            data: new FormData($('form')[0]),
+            cache: false,
+            contentType: false,
+            beforeSend: function () {
+                $(".btn_upload").val("Uploading...");
+            },
+            processData: false,
+
+            // Custom XMLHttpRequest
+            xhr: function () {
+                var myXhr = $.ajaxSettings.xhr();
+                if (myXhr.upload) {
+                    // For handling the progress of the upload
+                    myXhr.upload.addEventListener('progress', function (e) {
+                        if (e.lengthComputable) {
+                            $('progress').attr({
+                                value: e.loaded,
+                                max: e.total,
+                            });
+                        }
+                    }, false);
+                }
+                return myXhr;
+            },
+            success: function (resp) {
+                $("#hdnCloudId").val("");
+                $("#hdnCloudId").val(resp);
+                $("#CloudId").val("");
+                $("#CloudId").val(resp);
+
+                if ($(".url_details").hasClass("hidden")) {
+                    $(".url_details").removeClass("hidden")
+                }
+
+                $(".btn_upload").val("Upload Successfull");
+
+                //set url
+                $("#hdnUploadUrl").val("");
+                var strResp = '';
+                strResp = resp;
+                $("#hdnUploadUrl").val(strResp.split('~')[1]);
+
+                $("#CloudId").val("");
+                $("#CloudId").val(strResp.split('~')[0]);
+            }
+        });
+    });
+
+    $(".anc_remove").click(function () {
+        $.ajax({
+            url: '/Test/DeleteFile',
+            type: 'POST',
+            data: { cloudId: $("#hdnCloudId").val() },
+            success: function (resp) {
+                if (!$(".url_details").hasClass("hidden")) {
+                    $(".url_details").addClass("hidden")
+                }
+
+                $(".file_cloud").val("");
+                $("#hdnCloudId").val("");
+                $("#CloudId").val("");
+
+                $(".btn_upload").val("Upload");
+            }
+        });
+    });
+
+    function createFBContent() {
+        var content = '';
+        content = content + "Title: " + $("#Title").val() + "\n";
+        content = content + "Description: " + $("#Summary").val() + "\n";
+        content = content + "Price: " + $("#Price").val() + "\n";
+
+        return content;
+    }
+
+</script>

@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11.5, 11.125" name="AutoSeller">
+  <DataContextMoniker Name="/AutoSellerDataContext" />
+  <nestedChildShapes>
+    <classShape Id="80b7f8a1-f86b-4753-a1ae-98b9bbf3331d" absoluteBounds="0.75, 9.5, 2, 1.3862939453124987">
+      <DataClassMoniker Name="/AutoSellerDataContext/RootUser" />
+      <nestedChildShapes>
+        <elementListCompartment Id="d72606c4-633c-4a5d-aaa7-d78ddb5181f5" absoluteBounds="0.765, 9.96, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="c28b7106-85bb-491c-a200-e740ce04c1c9" absoluteBounds="8.875, 3.25, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/AutoSellerDataContext/CloudDoc" />
+      <nestedChildShapes>
+        <elementListCompartment Id="886cc016-3525-4a2b-af9b-a9c63b9b1435" absoluteBounds="8.89, 3.71, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="123b0b91-890f-4e08-9991-78c2cffbd9dd" absoluteBounds="3.25, 1.625, 2, 4.0785139973958326">
+      <DataClassMoniker Name="/AutoSellerDataContext/AdvertModule" />
+      <nestedChildShapes>
+        <elementListCompartment Id="0bd12cae-fef3-4c91-8bc8-ccb4f2e7afe7" absoluteBounds="3.265, 2.085, 1.9700000000000002, 3.518513997395833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="55af9e59-957a-4fa2-85ba-2565d01e62c1" absoluteBounds="6.5, 1.875, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/AutoSellerDataContext/ModuleWise" />
+      <nestedChildShapes>
+        <elementListCompartment Id="74fe8125-98cd-4391-90aa-0e50f00ef6a2" absoluteBounds="6.515, 2.335, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(5.25 : 2.95274983723958); (6.5 : 2.95274983723958)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/AutoSellerDataContext/AdvertModule/AdvertModule_ModuleWise" />
+      <nodes>
+        <classShapeMoniker Id="123b0b91-890f-4e08-9991-78c2cffbd9dd" />
+        <classShapeMoniker Id="55af9e59-957a-4fa2-85ba-2565d01e62c1" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="215f1ec3-1ac8-4678-a2b5-82f23ac81886" absoluteBounds="4.125, 7.625, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/AutoSellerDataContext/EntityCredential" />
+      <nestedChildShapes>
+        <elementListCompartment Id="59271cce-76a1-4030-8a22-031d52b464d2" absoluteBounds="4.14, 8.085, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(6.125 : 9.56174967447917); (7.09375 : 9.56174967447917); (7.09375 : 4.03049967447917)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/AutoSellerDataContext/EntityCredential/EntityCredential_ModuleWise" />
+      <nodes>
+        <classShapeMoniker Id="215f1ec3-1ac8-4678-a2b5-82f23ac81886" />
+        <classShapeMoniker Id="55af9e59-957a-4fa2-85ba-2565d01e62c1" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.75 : 9.92870198567708); (4.125 : 9.92870198567708)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/AutoSellerDataContext/RootUser/RootUser_EntityCredential" />
+      <nodes>
+        <classShapeMoniker Id="80b7f8a1-f86b-4753-a1ae-98b9bbf3331d" />
+        <classShapeMoniker Id="215f1ec3-1ac8-4678-a2b5-82f23ac81886" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="06a37b9f-cbb2-4dc1-98a6-428894e69caa" absoluteBounds="9.25, 8.125, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/AutoSellerDataContext/FBGorup" />
+      <nestedChildShapes>
+        <elementListCompartment Id="fbdebcb5-81ae-46c6-9819-04ded4fae996" absoluteBounds="9.265, 8.585, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(6.125 : 8.78087483723959); (7.01041666666667 : 8.78087483723959 : JumpStart); (7.17708333333333 : 8.78087483723959 : JumpEnd); (9.25 : 8.78087483723959)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/AutoSellerDataContext/EntityCredential/EntityCredential_FBGorup" />
+      <nodes>
+        <classShapeMoniker Id="215f1ec3-1ac8-4678-a2b5-82f23ac81886" />
+        <classShapeMoniker Id="06a37b9f-cbb2-4dc1-98a6-428894e69caa" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

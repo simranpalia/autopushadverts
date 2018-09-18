@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="IIS Web Application Name" description="" value="SellerEngine" tags="IisApp">
+    <parameterEntry kind="ProviderPath" scope="IisApp" match="^C:\\VS\\AutoPushEngine\\SellerEngine\\SellerEngine\\obj\\Debug\\Package\\PackageTmp$" />
+    <parameterEntry kind="ProviderPath" scope="setAcl" match="^C:\\VS\\AutoPushEngine\\SellerEngine\\SellerEngine\\obj\\Debug\\Package\\PackageTmp$" />
+  </parameter>
+  <parameter name="Add write permission to App_Data Folder" description="Add write permission to App_Data folder" value="SellerEngine/App_Data" tags="Hidden">
+    <parameterEntry kind="ProviderPath" scope="setAcl" match="^C:\\VS\\AutoPushEngine\\SellerEngine\\SellerEngine\\obj\\Debug\\Package\\PackageTmp\\App_Data$" />
+  </parameter>
+  <parameter name="SellerEngineConnectionString-Web.config Connection String" description="" value="Data Source=BPOFFHQMM4\SQLEXPRESS;Initial Catalog=SellerEngine;Integrated Security=True" tags="">
+    <parameterEntry kind="XmlFile" scope="C:\\VS\\AutoPushEngine\\SellerEngine\\SellerEngine\\obj\\Debug\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='SellerEngineConnectionString']/@connectionString" />
+  </parameter>
+</parameters>

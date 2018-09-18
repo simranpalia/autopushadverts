@@ -1,0 +1,122 @@
+﻿@model SellerEngine.AdvertModule
+@{
+    ViewBag.Title = "Edit Add";
+    List<SelectListItem> ddlLocation = new List<SelectListItem>();
+    ddlLocation.Add(new SelectListItem() { Text = "Johor", Value = "Johor" });
+    ddlLocation.Add(new SelectListItem() { Text = "Selangor", Value = "Selangor" });
+
+    List<SelectListItem> ddlPref = new List<SelectListItem>();
+    ddlPref.Add(new SelectListItem() { Text = "Any Preference", Value = "Any Preference" });
+    ddlPref.Add(new SelectListItem() { Text = "Malay", Value = "Malay" });
+}
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<div class="container">
+    @using (Html.BeginForm("EditAdd", "Test", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="form-horizontal">
+            <h4>Edit Advertisement</h4>
+            @Html.HiddenFor(x => x.Id)
+            @Html.HiddenFor(x => x.CredId)
+            @Html.HiddenFor(x => x.AdvertId)
+            @Html.HiddenFor(x => x.CreatedAt)
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        <label class="control-label">Title</label>
+                    </div>
+                    <div class="col-lg-12">
+                        @Html.TextBoxFor(x => x.Title, new { @class = "form-control", placeholder = "Title" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        <label class="control-label">Summary</label>
+                    </div>
+                    <div class="col-lg-12">
+                        @Html.TextAreaFor(x => x.Summary, new { @class = "form-control", placeholder = "Summary" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        <label class="control-label">Location</label>
+                    </div>
+                    <div class="col-lg-12">
+                        @Html.DropDownListFor(x => x.Location, new SelectList(ddlLocation, "Value", "Text", Model.Location), "--Select--", new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        <label class="control-label">Preference</label>
+                    </div>
+                    <div class="col-lg-12">
+                        @Html.DropDownListFor(x => x.Preference, new SelectList(ddlPref, "Value", "Text", Model.Preference), "--Select--", new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        <label class="control-label">Price/Rent</label>
+                    </div>
+                    <div class="col-lg-12">
+                        @Html.DropDownListFor(x => x.Price, new SelectList(Enumerable.Range(250, 900), Model.Price), "--Select--", new { @class = "form-control", placeholder = "Summary" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        <label class="control-label">Amenities</label>
+                    </div>
+                    <div class="col-lg-12">
+                        <label>
+                            @Html.CheckBoxFor(x => x.AirCond) Air Cond.
+                        </label>
+                        <br />
+                        <label>
+                            @Html.CheckBoxFor(x => x.CookingAllowed) Cooking Allowed
+                        </label>
+                        <br />
+                        <label>
+                            @Html.CheckBoxFor(x => x.Internet) Internet
+                        </label>
+                        <br />
+                        <label>
+                            @Html.CheckBoxFor(x => x.NearKTM) Near KTM
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <div class="col-lg-4">
+                        Picture
+                    </div>
+                    <div class="col-lg-12">
+                        @if (!string.IsNullOrWhiteSpace(Model.PicUrl))
+                        {
+                            //show image
+                            <img src="@Model.PicUrl" alt="No Preview" class="img img-thumbnail" /><span> | </span><a href="javascript:;">Edit or Remove</a>
+                            @Html.HiddenFor(x=>x.PicUrl)
+                        }
+                        else
+                        {
+                            <input type="file" name="file" />
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-16">
+                    <button type="submit" class="btn btn-primary">Publish on iBilik</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
